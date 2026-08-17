@@ -20,21 +20,24 @@ labelling teeth, primary quadrants — is part of the component instead.
 
 ## Install
 
-```bash
-yarn add @rezneed/rn-odontogram
-# peer deps
-yarn add react-native-svg
-```
-
-From this private repository:
+The package is private and not published to npm — install it straight from this
+repository, pinned to a tag:
 
 ```bash
 yarn add @rezneed/rn-odontogram@git+https://github.com/Rezneed/rn-odontogram.git#tag=v1.0.0
 ```
 
-Yarn builds the package on install (`prepack` → `tsc`), so nothing needs to be
-committed to `lib/`. Use `#head=main` only while developing — a tag is what makes
-an install reproducible.
+`react-native-svg` is a peer dependency. Every React Native app here already has
+it; if not: `yarn add react-native-svg`.
+
+On install Yarn clones the repo, runs the package's `prepack` (`tsc` → `lib/`) and
+records the resolved commit in the consumer's `yarn.lock` — that commit, not the
+tag, is what makes the install reproducible. `lib/` is therefore never committed.
+Use `#head=main` only while developing the package.
+
+Bumping the app to a newer package version = change `#tag=v1.0.0` to the new tag
+and run `yarn install`. Until the tag changes, the app keeps building against the
+old version.
 
 ## Versioning
 
@@ -85,6 +88,25 @@ export const TeethPicker = ({width}: {width: number}) => {
 
 Selection is **controlled** — the component never keeps its own copy, so a
 `selected` change is reflected immediately (no remount tricks needed).
+
+Read-only display, the way the customer plan tab uses it — no `onToothPress`, so
+no tap targets are rendered at all:
+
+```tsx
+<Odontogram
+  readOnly
+  width={chartWidth}
+  dentition={dentition}
+  selected={plannedTeeth}
+  archGap={14}
+  colors={{selectedFill: '#F0EBFE', selectedOutline: '#8E59FF'}}
+  lowerQuadrants="swapped"
+/>
+```
+
+`width` is required — measure the container with `onLayout` and render the chart
+once the width is known. Tooth codes are **strings** (`'11'`, `'75'`); an API that
+returns numbers needs `.map(String)`.
 
 ## Props
 
