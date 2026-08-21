@@ -20,24 +20,17 @@ labelling teeth, primary quadrants — is part of the component instead.
 
 ## Install
 
-The package is private and not published to npm — install it straight from this
-repository, pinned to a tag:
+Published to npm as [`@rezneed/rn-odontogram`](https://www.npmjs.com/package/@rezneed/rn-odontogram):
 
 ```bash
-yarn add @rezneed/rn-odontogram@git+https://github.com/Rezneed/rn-odontogram.git#tag=v1.0.0
+yarn add @rezneed/rn-odontogram
 ```
 
 `react-native-svg` is a peer dependency. Every React Native app here already has
 it; if not: `yarn add react-native-svg`.
 
-On install Yarn clones the repo, runs the package's `prepack` (`tsc` → `lib/`) and
-records the resolved commit in the consumer's `yarn.lock` — that commit, not the
-tag, is what makes the install reproducible. `lib/` is therefore never committed.
-Use `#head=main` only while developing the package.
-
-Bumping the app to a newer package version = change `#tag=v1.0.0` to the new tag
-and run `yarn install`. Until the tag changes, the app keeps building against the
-old version.
+The tarball is built on publish (`prepack` → `tsc` → `lib/`), so `lib/` is never
+committed. Bumping the app = change the version in `package.json`, `yarn install`.
 
 ## Versioning
 
@@ -49,11 +42,13 @@ Plain semver, starting at **1.0.0** (the API below is what the app depends on):
 | a new prop or export, existing calls unaffected                                 | minor → `1.1.0` | adding `onToothLongPress`                         |
 | a fix with the same API                                                         | patch → `1.0.1` | tap target off by a few px                        |
 
-Release: bump `version` in `package.json` → `yarn test && yarn check && yarn build`
-→ commit → `git tag v<version>` → push with `--tags`. Then point the app at the
-new tag. The app's `yarn.lock` records the resolved commit, so the version in
-`package.json` is what tells a reader _which_ chart the app is on — keep them in
-step.
+Release: bump `version` in `package.json` → `yarn test && yarn check` → commit →
+publish a GitHub Release whose tag is `v<version>`. The `Publish` workflow
+(`.github/workflows/publish.yml`) checks the tag against `package.json`, builds and
+runs `npm publish`. Auth is npm **trusted publishing** (OIDC from GitHub Actions —
+no token stored anywhere); it is configured once on npmjs.com under the package's
+_Settings → Trusted Publisher_ (`Rezneed` / `rn-odontogram` / `publish.yml`). A
+version that is already on npm is skipped, so re-running a release is safe.
 
 ## Usage
 

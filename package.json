@@ -15,6 +15,10 @@
     "type": "git",
     "url": "git+https://github.com/Rezneed/rn-odontogram.git"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "main": "lib/index.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
